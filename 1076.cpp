@@ -1,67 +1,89 @@
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
-#define N 10005
+#include<bits/stdc++.h>
+
 using namespace std;
+
+#define SIZ 1005
+
+bool isPossible(int);
+int BS(long long,int);
+
+int n,m,vessel[SIZ];
 
 int main()
 {
+    int tc,cn,res;
+    long long low,total;
+    cin>>tc;
 
-	int t;
-	int a[N];
-	long long bb;
-	long long sum[N];
-	int m;
-	long long maxi;
-	int n;
-	
-	scanf("%d", &t);
+    for(cn=1;cn<=tc;cn++)
+    {
+        cin>>n>>m;
+        total=low=0;
+        for(int i=0;i<n;i++)
+        {
+            cin>>vessel[i];
 
-	for (int cs = 1; cs <= t; cs++) {
-		scanf("%d", &n);
-		scanf("%d", &m);
+            total += vessel[i];
 
-		sum[n ] = 0;
-		maxi = -1;
-		bb = 0;		
-		int j;
-		j = 0;
+            if(vessel[i]>low)
+                low=vessel[i];
+        }
 
-		for (int i = 0; i < n; i++) {
-			scanf("%d", a + i);
-		}
-
-		for (int i = n - 1; i >= 0; i--) {
-			sum[i] = sum[i + 1] + a[i ];
-		}
-
-		for (int i = 0; i < n; i++) {
-		//	cout << sum[i] << " ";
-		}
-
-	//	cout << endl;
-
-		for (int i = 0; i < n; ) {
-			if(bb + a[i] <= maxi) {
-				bb = bb + a[i];
-				i++;
-			}
-			else {
-				if((double)(bb + a[i]) <= (double) sum[i] / (m - (j + 1))) {
-					bb = bb + a[i];
-					maxi = max(maxi, bb);
-					i++;
-				}
-				else {
-					bb = 0;
-				}
-
-			}
-		}
-
-		printf("Case %d: %lld\n", cs, maxi);
-
-	}
+        res = BS(total,low);
+        cout<<"Case "<<cn<<": "<<res<<endl;
+    }
 
 
+}
+
+bool isPossible(int capacity)
+{
+    int temp;
+    int cnt = 1;
+
+    temp=0;
+    for(int i=0;i<n;i++)
+    {
+        if( temp+vessel[i] <= capacity )
+        {
+            temp = temp+vessel[i];
+        }
+        else    //Filled to brim, new container needed
+        {
+            temp=vessel[i];
+            cnt++;
+        }
+    }
+
+     if(cnt>m)
+        return false;
+
+     else
+       return true;
+
+}
+
+int BS(long long total,int maxCapacity)
+{
+    int low,mid,ans;
+    long long high;
+
+    low = maxCapacity;
+    high = total;
+
+    while(low<=high)
+    {
+        mid = (low+high)/2;
+
+        if(isPossible(mid))
+        {
+             ans = mid;
+             high = mid-1;
+        }
+
+        else
+            low = mid+1;
+    }
+
+    return ans;
 }
